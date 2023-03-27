@@ -1,0 +1,116 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ATDataFetchService.DBContexts;
+using ATDataFetchService.Models;
+
+namespace ATDataFetchService.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ATOrderDetailsOutputsController : ControllerBase
+    {
+        private readonly ATDBContext _context;
+
+        public ATOrderDetailsOutputsController(ATDBContext context)
+        {
+            _context = context;
+        }
+
+        //// GET: api/ATOrderDetailsOutputs
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<ATOrderDetailsOutput>>> GetATOrderDetailsOutput()
+        //{
+        //    return await _context.ATOrderDetailsOutput.ToListAsync();
+        //}
+
+        // GET: api/ATOrderDetailsOutputs/5
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<ATOrderDetailsOutput>> GetATOrderDetailsOutput(string id)
+        //{
+        //    var aTOrderDetailsOutput = await _context.ATOrderDetailsOutput.FindAsync(id);
+
+        //    if (aTOrderDetailsOutput == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return aTOrderDetailsOutput;
+        //}
+
+        //// PUT: api/ATOrderDetailsOutputs/5
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutATOrderDetailsOutput(string id, ATOrderDetailsOutput aTOrderDetailsOutput)
+        //{
+        //    if (id != aTOrderDetailsOutput.client)
+        //    {
+        //        return BadRequest();
+        //    }
+
+        //    _context.Entry(aTOrderDetailsOutput).State = EntityState.Modified;
+
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!ATOrderDetailsOutputExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
+
+        //    return NoContent();
+        //}
+
+        // POST: api/ATOrderDetailsOutputs
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<List<ATOrderDetailsOutput>>> PostATOrderDetailsOutput(ATOrderDetailsInput input)
+        {
+            string StoredProc = "exec usp_GetATTradeDataForDashboard " +
+          "@firm = '" + input.Firm + "'" ;
+            try
+            {
+                //return await _context.output.ToListAsync();
+                return await _context.ATOrderDetailsOutput.FromSqlRaw(StoredProc).ToListAsync();
+            }
+            catch(Exception ex)
+            {
+
+            }
+            return await _context.ATOrderDetailsOutput.FromSqlRaw(StoredProc).ToListAsync();
+        }
+
+        // DELETE: api/ATOrderDetailsOutputs/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteATOrderDetailsOutput(string id)
+        //{
+        //    var aTOrderDetailsOutput = await _context.ATOrderDetailsOutput.FindAsync(id);
+        //    if (aTOrderDetailsOutput == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    _context.ATOrderDetailsOutput.Remove(aTOrderDetailsOutput);
+        //    await _context.SaveChangesAsync();
+
+        //    return NoContent();
+        //}
+
+        private bool ATOrderDetailsOutputExists(string id)
+        {
+            return _context.ATOrderDetailsOutput.Any(e => e.client == id);
+        }
+    }
+}
