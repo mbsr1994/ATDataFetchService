@@ -76,20 +76,22 @@ namespace ATDataFetchService.Controllers
         // POST: api/ATOrderDetailsOutputs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<List<ATOrderDetailsOutput>>> PostATOrderDetailsOutput(ATOrderDetailsInput input)
+        public  JsonResult PostATOrderDetailsOutput(ATOrderDetailsInput input)
         {
             string StoredProc = "exec usp_GetATTradeDataForDashboard " +
           "@firm = '" + input.Firm + "'" ;
             try
             {
                 //return await _context.output.ToListAsync();
-                return await _context.ATOrderDetailsOutput.FromSqlRaw(StoredProc).ToListAsync();
+                 var a = _context.ATOrderDetailsOutput.FromSqlRaw(StoredProc).ToList() ;
+                //var asa=_context.Set<JsonResult>().FromSqlRaw(StoredProc).ToListAsync();
+                return  new JsonResult(a);
             }
             catch(Exception ex)
             {
 
             }
-            return await _context.ATOrderDetailsOutput.FromSqlRaw(StoredProc).ToListAsync();
+            return new JsonResult("");
         }
 
         // DELETE: api/ATOrderDetailsOutputs/5
@@ -110,7 +112,7 @@ namespace ATDataFetchService.Controllers
 
         private bool ATOrderDetailsOutputExists(string id)
         {
-            return _context.ATOrderDetailsOutput.Any(e => e.client == id);
+            return true;
         }
     }
 }
