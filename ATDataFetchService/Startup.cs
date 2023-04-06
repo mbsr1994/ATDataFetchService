@@ -12,8 +12,11 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
+
+
 
 namespace ATDataFetchService
 {
@@ -24,12 +27,32 @@ namespace ATDataFetchService
             Configuration = configuration;
         }
 
+
+
         public IConfiguration Configuration { get; }
+
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
 
+
+
+        {
+            var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+            services.AddCors(options =>
+            {
+
+
+
+                options.AddDefaultPolicy(
+                policy =>
+                {
+                    policy.WithOrigins("http://localhost:3000")
+     .AllowAnyHeader()
+     .AllowAnyMethod();
+                });
+            });
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -37,11 +60,12 @@ namespace ATDataFetchService
             });
             services.AddDbContext<ATDBContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("DWConnection"));
+                options.UseSqlServer(Configuration.GetConnectionString("DWConnection"), sqlServerOptions => sqlServerOptions.CommandTimeout(200));
+
             });
-            services.AddControllers().AddNewtonsoftJson(options =>
-    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
         }
+
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -53,11 +77,23 @@ namespace ATDataFetchService
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ATDataFetchService v1"));
             }
 
+
+
             app.UseHttpsRedirection();
+
+
 
             app.UseRouting();
 
+
+
+            app.UseCors();
+
+
+
             app.UseAuthorization();
+
+
 
             app.UseEndpoints(endpoints =>
             {

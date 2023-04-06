@@ -9,11 +9,13 @@ namespace ATDataFetchService.Models
     public class ATOrderDetailsOutput
     {
         public string monthValue { get; set; }
-        [Key]
+      
         public string monthId { get; set; }
 
         public string countOfATOrders { get; set; }
       
         public string client { get; set; }
+        [Key]
+        public string id { get; set; }
     }
 }
